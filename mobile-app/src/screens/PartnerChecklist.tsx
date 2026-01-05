@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { Alert, Button, ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import api from "../services/api";
+import AppButton from "../components/AppButton";
+import { palette, spacing } from "../theme";
 
 type Verification = {
   id: number;
@@ -54,33 +56,89 @@ const PartnerChecklist = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16 }}>
-      <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 12 }}>
-        Painel do parceiro
-      </Text>
-      <Button title="Atualizar verificações" onPress={refresh} disabled={loading} />
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Painel do parceiro</Text>
+      <AppButton title="Atualizar verificações" onPress={refresh} loading={loading} />
+      {statusMessage && <Text style={styles.status}>{statusMessage}</Text>}
 
       {records.map((record) => (
-        <View
-          key={record.id}
-          style={{ marginVertical: 12, borderWidth: 1, padding: 12, borderRadius: 8 }}
-        >
-          <Text style={{ fontWeight: "600" }}>Contrato #{record.contratoId}</Text>
-          <Text>Parceiro: {record.parceiroId}</Text>
-          <Text>Integridade: {record.integridade}</Text>
-          <Text>Início: {new Date(record.checkinInicio).toLocaleString()}</Text>
-          <View style={{ marginTop: 8, flexDirection: "row" }}>
-            <View style={{ flex: 1, marginRight: 8 }}>
-              <Button title="Confirmar início" onPress={() => startVerification(record.contratoId)} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Button title="Finalizar" onPress={() => finalizeVerification(record.contratoId)} />
-            </View>
+        <View key={record.id} style={styles.recordCard}>
+          <View>
+            <Text style={styles.contractLabel}>Contrato #{record.contratoId}</Text>
+            <Text style={styles.recordText}>Parceiro: {record.parceiroId}</Text>
+            <Text style={styles.recordText}>Integridade: {record.integridade}</Text>
+            <Text style={styles.recordText}>
+              Início: {new Date(record.checkinInicio).toLocaleString()}
+            </Text>
+          </View>
+          <View style={styles.recordActions}>
+            <AppButton
+              title="Confirmar início"
+              onPress={() => startVerification(record.contratoId)}
+              variant="ghost"
+              style={[styles.smallButton, styles.actionSpacing]}
+            />
+            <AppButton
+              title="Finalizar"
+              onPress={() => finalizeVerification(record.contratoId)}
+              variant="ghost"
+              style={styles.smallButton}
+            />
           </View>
         </View>
       ))}
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: spacing.lg,
+    backgroundColor: palette.background,
+    minHeight: "100%",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: palette.text,
+    marginBottom: spacing.sm,
+  },
+  status: {
+    color: palette.success,
+    marginBottom: spacing.sm,
+  },
+  recordCard: {
+    backgroundColor: palette.card,
+    borderRadius: spacing.lg,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: palette.border,
+    marginBottom: spacing.md,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+  contractLabel: {
+    color: palette.text,
+    fontWeight: "700",
+    marginBottom: spacing.sm,
+  },
+  recordText: {
+    color: palette.textMuted,
+  },
+  recordActions: {
+    flexDirection: "row",
+    marginTop: spacing.sm,
+  },
+  smallButton: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+  },
+  actionSpacing: {
+    marginRight: spacing.sm,
+  },
+});
 
 export default PartnerChecklist;

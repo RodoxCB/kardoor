@@ -11,6 +11,7 @@ import campanhasRouter from "./routes/campanhas";
 import recompensasRouter from "./routes/recompensas";
 import pagamentosRouter from "./routes/pagamentos";
 import inscricoesRouter from "./routes/inscricoes";
+import authRouter from "./routes/auth";
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use("/campanhas", campanhasRouter);
 app.use("/recompensas", recompensasRouter);
 app.use("/pagamentos", pagamentosRouter);
 app.use("/parceiros/inscricao", inscricoesRouter);
+app.use("/auth", authRouter);
 
 app.use((_req, res) => res.status(404).json({ error: "Rota não encontrada" }));
 

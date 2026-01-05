@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start:all": "bash scripts/start-workspace.sh"
+  },
   "devDependencies": {
     "prisma": "^5.22.0"
   },

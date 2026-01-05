@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { Alert, Button, ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import * as Location from "expo-location";
 import api from "../services/api";
+import { palette, spacing } from "../theme";
+import AppButton from "../components/AppButton";
 
 type ContractSummary = {
   id: number;
@@ -68,39 +70,108 @@ const DriverDashboard = () => {
   const highlightContract = contracts[0];
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16 }}>
-      <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 12 }}>
-        Painel do motorista
-      </Text>
-      <Text style={{ marginBottom: 8 }}>{locationState}</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Painel do motorista</Text>
+      <View style={styles.statusCard}>
+        <Text style={styles.statusText}>{locationState}</Text>
+      </View>
+
       {highlightContract ? (
-        <View style={{ marginBottom: 16, padding: 12, borderWidth: 1, borderRadius: 8 }}>
-          <Text style={{ fontWeight: "600" }}>Contrato #{highlightContract.id}</Text>
-          <Text>Status: {highlightContract.status}</Text>
-          <Text>Meta de km: {highlightContract.kmsMeta}</Text>
-          <Text>Valor estimado: R${highlightContract.valor.toFixed(2)}</Text>
+        <View style={styles.contractCard}>
+          <Text style={styles.contractTitle}>Contrato #{highlightContract.id}</Text>
+          <Text style={styles.contractCopy}>Status: {highlightContract.status}</Text>
+          <Text style={styles.contractCopy}>Meta de km: {highlightContract.kmsMeta}</Text>
+          <Text style={styles.contractCopy}>
+            Valor estimado: R${highlightContract.valor.toFixed(2)}
+          </Text>
         </View>
       ) : (
-        <Text style={{ marginBottom: 16 }}>Nenhum contrato ativo encontrado.</Text>
+        <View style={styles.contractCard}>
+          <Text style={styles.contractCopy}>Nenhum contrato ativo encontrado.</Text>
+        </View>
       )}
 
-      <Button title="Enviar registro KMR" onPress={pushLocation} disabled={loading} />
+      <ActionButton title="Enviar registro KMR" onPress={pushLocation} loading={loading} />
 
-      <View style={{ marginTop: 24 }}>
-        <Text style={{ fontSize: 18, fontWeight: "600" }}>Histórico de contratos</Text>
+      <View style={styles.historyContainer}>
+        <Text style={styles.sectionTitle}>Histórico de contratos</Text>
         {contracts.map((contract) => (
-          <View
-            key={contract.id}
-            style={{ marginVertical: 8, padding: 10, borderWidth: 1, borderRadius: 6 }}
-          >
-            <Text>ID: {contract.id}</Text>
-            <Text>Motorista: {contract.motorista.nome}</Text>
-            <Text>Status: {contract.status}</Text>
+          <View key={contract.id} style={styles.historyItem}>
+            <Text style={styles.historyLabel}>ID: {contract.id}</Text>
+            <Text style={styles.historyLabel}>Motorista: {contract.motorista.nome}</Text>
+            <Text style={styles.historyLabel}>Status: {contract.status}</Text>
           </View>
         ))}
       </View>
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: spacing.lg,
+    backgroundColor: palette.background,
+    minHeight: "100%",
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "700",
+    color: palette.text,
+    marginBottom: spacing.sm,
+  },
+  statusCard: {
+    backgroundColor: palette.card,
+    padding: spacing.md,
+    borderRadius: spacing.lg,
+    borderColor: palette.border,
+    borderWidth: 1,
+    marginBottom: spacing.md,
+  },
+  statusText: {
+    color: palette.text,
+  },
+  contractCard: {
+    backgroundColor: palette.card,
+    padding: spacing.md,
+    borderRadius: spacing.lg,
+    borderColor: palette.border,
+    borderWidth: 1,
+    marginBottom: spacing.md,
+    shadowColor: "#000",
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 5,
+  },
+  contractTitle: {
+    color: palette.text,
+    fontWeight: "700",
+    marginBottom: spacing.sm,
+  },
+  contractCopy: {
+    color: palette.textMuted,
+    marginBottom: spacing.xs,
+  },
+  historyContainer: {
+    marginTop: spacing.lg,
+  },
+  sectionTitle: {
+    color: palette.text,
+    fontSize: 20,
+    fontWeight: "600",
+    marginBottom: spacing.sm,
+  },
+  historyItem: {
+    backgroundColor: palette.cardAccent,
+    padding: spacing.md,
+    borderRadius: spacing.lg,
+    marginBottom: spacing.sm,
+    borderColor: palette.border,
+    borderWidth: 1,
+  },
+  historyLabel: {
+    color: palette.textMuted,
+  },
+});
 
 export default DriverDashboard;

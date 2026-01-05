@@ -98,7 +98,7 @@ const Dashboard = () => {
 
       {loading && <p>Carregando campanhas...</p>}
 
-      <section>
+      <section className="card-grid" aria-label="Campanhas recentes">
         {(overview ?? fallback).campanhas.map((campanha) => (
           <ImpactReport key={campanha.campanhaId} data={campanha} />
         ))}
